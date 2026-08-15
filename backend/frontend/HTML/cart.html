@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>My Cart - Smart Grocery</title>
+
+    <link rel="stylesheet"
+          href="/CSS/cart.css">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+</head>
+
+<body>
+
+    <!-- ==========================================
+         NAVBAR
+    =========================================== -->
+
+    <nav class="navbar">
+
+        <div class="logo">
+            🛒 Smart Grocery
+        </div>
+
+        <div class="nav-links">
+
+            <a href="/HTML/dashboard.html">
+                Dashboard
+            </a>
+
+            <a href="/HTML/products.html">
+                Products
+            </a>
+
+            <a href="/HTML/cart.html"
+               class="active">
+
+                Cart 🛒
+
+                <span id="cartCount">
+                    0
+                </span>
+
+            </a>
+
+            <a href="/HTML/orders.html">
+                My Orders
+            </a>
+
+            <button
+                id="logoutBtn"
+                type="button">
+
+                Logout
+
+            </button>
+
+        </div>
+
+    </nav>
+
+
+    <!-- ==========================================
+         MAIN CART PAGE
+    =========================================== -->
+
+    <main class="cart-page">
+
+        <section class="page-heading">
+
+            <h1>
+                Your Shopping Cart 🛒
+            </h1>
+
+            <p>
+                Review your grocery items before checkout.
+            </p>
+
+        </section>
+
+
+        <!-- ==========================================
+             CART LAYOUT
+        =========================================== -->
+
+        <div class="cart-layout">
+
+
+            <!-- ======================================
+                 CART ITEMS
+            ======================================= -->
+
+            <section class="cart-items">
+
+                <div id="cartContainer">
+
+                    <div class="loading">
+                        Loading cart...
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ======================================
+                 ORDER SUMMARY
+            ======================================= -->
+
+            <aside class="cart-summary">
+
+                <h2>
+                    Order Summary
+                </h2>
+
+
+                <div class="summary-row">
+
+                    <span>
+                        Items
+                    </span>
+
+                    <span id="totalItems">
+                        0
+                    </span>
+
+                </div>
+
+
+                <div class="summary-row">
+
+                    <span>
+                        Subtotal
+                    </span>
+
+                    <span>
+                        ₹<span id="subtotal">0.00</span>
+                    </span>
+
+                </div>
+
+
+                <div class="summary-row">
+
+                    <span>
+                        Delivery
+                    </span>
+
+                    <span class="free">
+                        FREE
+                    </span>
+
+                </div>
+
+
+                <hr>
+
+
+                <div class="total-row">
+
+                    <span>
+                        Total
+                    </span>
+
+                    <span>
+                        ₹<span id="totalPrice">0.00</span>
+                    </span>
+
+                </div>
+
+
+                <button
+                    id="checkoutBtn"
+                    class="checkout-btn"
+                    type="button">
+
+                    Proceed to Checkout 🛍️
+
+                </button>
+
+
+                <button
+                    id="clearCartBtn"
+                    class="clear-btn"
+                    type="button">
+
+                    Clear Cart
+
+                </button>
+
+            </aside>
+
+        </div>
+
+    </main>
+
+
+    <!-- ==========================================
+         JAVASCRIPT
+         
+         IMPORTANT:
+         JavaScript is loaded from cart.js.
+         Do NOT paste JavaScript code above/below this.
+    =========================================== -->
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="/JS/cart.js"></script>
+
+</body>
+
+</html>

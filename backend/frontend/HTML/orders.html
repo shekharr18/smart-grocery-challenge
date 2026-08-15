@@ -1,0 +1,91 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Orders - Smart Grocery Challenge</title>
+
+    <link rel="stylesheet" href="/CSS/orders.css">
+</head>
+
+<body>
+
+    <nav class="navbar">
+
+        <div class="logo">
+            🛒 Smart Grocery
+        </div>
+
+        <div class="nav-links">
+
+            <a href="/HTML/dashboard.html">
+                🏠 Dashboard
+            </a>
+
+            <a href="/HTML/products.html">
+                🛍️ Products
+            </a>
+
+            <a href="/HTML/cart.html">
+                🛒 Cart
+                <span id="cartCount">0</span>
+            </a>
+
+            <a href="/HTML/orders.html" class="active">
+                📦 My Orders
+            </a>
+
+            <button id="logoutBtn">
+                Logout
+            </button>
+
+        </div>
+
+    </nav>
+
+
+    <main class="orders-page">
+
+        <div class="page-header">
+
+            <h1>My Orders 📦</h1>
+
+            <p>
+                View and track your grocery orders.
+            </p>
+
+        </div>
+
+
+        <div id="ordersContainer">
+
+            <div class="loading">
+                Loading your orders...
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <footer>
+
+        <p>
+            © 2026 Smart Grocery Challenge
+        </p>
+
+        <p>
+            Smart shopping made simple 🛒
+        </p>
+
+    </footer>
+
+
+    <script src="/JS/orders.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Products - Smart Grocery</title>
+
+    <link rel="stylesheet"
+          href="/CSS/products.css">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+
+    <nav class="navbar">
+
+        <div class="logo">
+            🛒 Smart Grocery
+        </div>
+
+        <div class="nav-links">
+
+            <a href="/HTML/dashboard.html">
+                Dashboard
+            </a>
+
+            <a href="/HTML/products.html"
+               class="active">
+                Products
+            </a>
+
+            <a href="/HTML/cart.html">
+                Cart 🛒
+                <span id="cartCount">0</span>
+            </a>
+
+            <a href="/HTML/orders.html">
+                My Orders
+            </a>
+
+            <button
+                id="logoutBtn"
+                type="button">
+                Logout
+            </button>
+
+        </div>
+
+    </nav>
+
+
+    <!-- MAIN -->
+
+    <main class="products-page">
+
+        <section class="page-heading">
+
+            <h1>
+                Grocery Products 🛒
+            </h1>
+
+            <p>
+                Find your favourite grocery items
+                and add them to your cart.
+            </p>
+
+        </section>
+
+
+        <!-- SEARCH / FILTER -->
+
+        <section class="filter-section">
+
+            <div class="search-box">
+
+                <span>🔎</span>
+
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search products...">
+
+            </div>
+
+
+            <select id="categoryFilter">
+
+                <option value="all">
+                    All Categories
+                </option>
+
+            </select>
+
+
+            <select id="sortFilter">
+
+                <option value="default">
+                    Sort Products
+                </option>
+
+                <option value="price-low">
+                    Price: Low to High
+                </option>
+
+                <option value="price-high">
+                    Price: High to Low
+                </option>
+
+                <option value="name">
+                    Name: A to Z
+                </option>
+
+            </select>
+
+        </section>
+
+
+        <!-- RESULT -->
+
+        <div class="result-bar">
+
+            <p id="resultText">
+                Loading products...
+            </p>
+
+        </div>
+
+
+        <!-- PRODUCTS -->
+
+        <section
+            id="productsContainer"
+            class="products-grid">
+
+            <div class="loading">
+
+                <div class="spinner"></div>
+
+                <p>
+                    Loading products...
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- CART MESSAGE -->
+
+    <div
+        id="cartMessage"
+        class="cart-message">
+
+        Product added to cart 🛒
+
+    </div>
+
+
+    <!-- JAVASCRIPT -->
+
+    <script src="/JS/products.js"></script>
+
+</body>
+
+</html>

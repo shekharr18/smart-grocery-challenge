@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Grocery Challenge - Smart Grocery</title>
+
+    <link
+        rel="stylesheet"
+        href="/CSS/challenge.css"
+    >
+</head>
+
+<body>
+
+    <nav class="navbar">
+
+        <div class="logo">
+            🛒 Smart Grocery
+        </div>
+
+        <div class="nav-links">
+
+            <a href="/HTML/dashboard.html">
+                Dashboard
+            </a>
+
+            <a href="/HTML/products.html">
+                Products
+            </a>
+
+            <a href="/HTML/cart.html">
+                Cart 🛒
+                <span id="cartCount">0</span>
+            </a>
+
+            <a href="/HTML/orders.html">
+                Orders 📦
+            </a>
+
+            <button id="logoutBtn">
+                Logout
+            </button>
+
+        </div>
+
+    </nav>
+
+
+    <main class="challenge-page">
+
+        <section class="hero">
+
+            <div>
+
+                <span class="badge">
+                    🎯 DAILY CHALLENGE
+                </span>
+
+                <h1>
+                    Smart Grocery Challenge
+                </h1>
+
+                <p>
+                    Build a smart grocery basket
+                    without going over your budget.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- BUDGET CARDS -->
+
+        <section class="stats">
+
+            <div class="stat-card">
+
+                <span>💰 Budget</span>
+
+                <strong id="budget">
+                    ₹1000
+                </strong>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <span>🛒 Spending</span>
+
+                <strong id="spent">
+                    ₹0
+                </strong>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <span>💵 Remaining</span>
+
+                <strong id="remaining">
+                    ₹1000
+                </strong>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <span>⭐ Score</span>
+
+                <strong id="score">
+                    0
+                </strong>
+
+            </div>
+
+        </section>
+
+
+        <!-- PROGRESS -->
+
+        <section class="progress-card">
+
+            <div class="progress-header">
+
+                <span>
+                    Budget Usage
+                </span>
+
+                <span id="percentage">
+                    0%
+                </span>
+
+            </div>
+
+            <div class="progress-bar">
+
+                <div
+                    id="progress"
+                    class="progress"
+                ></div>
+
+            </div>
+
+        </section>
+
+
+        <!-- PRODUCTS -->
+
+        <section class="challenge-section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <h2>
+                        🛍️ Choose Your Groceries
+                    </h2>
+
+                    <p>
+                        Add products to your challenge basket.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="challengeProducts"
+                class="products-grid"
+            >
+
+                <p>
+                    Loading products...
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- SELECTED ITEMS -->
+
+        <section class="basket-card">
+
+            <h2>
+                🧺 Your Challenge Basket
+            </h2>
+
+            <div id="basketItems">
+
+                <p class="empty">
+                    No products selected yet.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- RESULT -->
+
+        <section
+            id="result"
+            class="result-card"
+        >
+
+            <div id="resultIcon">
+                🎯
+            </div>
+
+            <h2 id="resultTitle">
+                Keep Going!
+            </h2>
+
+            <p id="resultMessage">
+                Add groceries and stay within your budget.
+            </p>
+
+        </section>
+
+
+        <div class="actions">
+
+            <button
+                id="newChallengeBtn"
+                class="primary-btn"
+            >
+                🔄 New Challenge
+            </button>
+
+            <a
+                href="/HTML/products.html"
+                class="secondary-btn"
+            >
+                🛍️ Shop Products
+            </a>
+
+        </div>
+
+    </main>
+
+
+    <script src="/JS/challenge.js"></script>
+
+</body>
+
+</html>

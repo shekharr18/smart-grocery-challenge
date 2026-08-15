@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Order Details - Smart Grocery</title>
+
+    <link
+        rel="stylesheet"
+        href="/CSS/order-details.css"
+    >
+
+</head>
+
+<body>
+
+    <nav class="navbar">
+
+        <div class="logo">
+            🛒 Smart Grocery
+        </div>
+
+        <div class="nav-links">
+
+            <a href="/HTML/dashboard.html">
+                Dashboard
+            </a>
+
+            <a href="/HTML/products.html">
+                Products
+            </a>
+
+            <a href="/HTML/cart.html">
+                Cart 🛒
+                <span id="cartCount">0</span>
+            </a>
+
+            <a href="/HTML/orders.html">
+                My Orders 📦
+            </a>
+
+            <button id="logoutBtn">
+                Logout
+            </button>
+
+        </div>
+
+    </nav>
+
+
+    <main class="details-page">
+
+        <a
+            href="/HTML/orders.html"
+            class="back-btn"
+        >
+            ← Back to Orders
+        </a>
+
+
+        <div id="orderDetails">
+
+            <div class="loading">
+                📦 Loading order details...
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <script src="/JS/order-details.js"></script>
+
+</body>
+
+</html>
