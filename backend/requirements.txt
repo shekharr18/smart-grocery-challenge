@@ -1,0 +1,3 @@
+gunicorn
+flask
+# (and any other dependencies your project needs)
