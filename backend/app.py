@@ -1,13 +1,16 @@
-
 # ==========================================================
 # SMART GROCERY CHALLENGE
-# FLASK BACKEND
+# COMPLETE FLASK BACKEND
+# AIVEN MYSQL + RAZORPAY
 # ==========================================================
 
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
-from database import get_connection
 
+from database import get_connection
+from config import RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET
+
+import razorpay
 import os
 from decimal import Decimal
 from datetime import datetime
@@ -22,39 +25,78 @@ CORS(app)
 
 
 # ==========================================================
+# RAZORPAY CLIENT
+# ==========================================================
+
+razorpay_client = None
+
+if RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET:
+    razorpay_client = razorpay.Client(
+        auth=(
+            RAZORPAY_KEY_ID,
+            RAZORPAY_KEY_SECRET
+        )
+    )
+
+
+# ==========================================================
 # PROJECT PATHS
 # ==========================================================
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.dirname(
+    os.path.abspath(__file__)
+)
 
-FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
+FRONTEND_DIR = os.path.join(
+    BASE_DIR,
+    "frontend"
+)
 
-HTML_DIR = os.path.join(FRONTEND_DIR, "HTML")
-CSS_DIR = os.path.join(FRONTEND_DIR, "CSS")
-JS_DIR = os.path.join(FRONTEND_DIR, "JS")
-IMAGES_DIR = os.path.join(FRONTEND_DIR, "IMAGES")
+HTML_DIR = os.path.join(
+    FRONTEND_DIR,
+    "HTML"
+)
+
+CSS_DIR = os.path.join(
+    FRONTEND_DIR,
+    "CSS"
+)
+
+JS_DIR = os.path.join(
+    FRONTEND_DIR,
+    "JS"
+)
+
+IMAGES_DIR = os.path.join(
+    FRONTEND_DIR,
+    "IMAGES"
+)
 
 
 # ==========================================================
-# STARTUP INFORMATION
+# STARTUP
 # ==========================================================
 
 print()
 print("==========================================")
-print(" SMART GROCERY FLASK SERVER")
+print(" SMART GROCERY CHALLENGE")
+print(" FLASK BACKEND")
 print("==========================================")
-print("BASE DIR   :", BASE_DIR)
-print("FRONTEND   :", FRONTEND_DIR)
-print("HTML DIR   :", HTML_DIR)
-print("CSS DIR    :", CSS_DIR)
-print("JS DIR     :", JS_DIR)
-print("IMAGES DIR :", IMAGES_DIR)
+print("BASE DIR :", BASE_DIR)
+print("FRONTEND :", FRONTEND_DIR)
+print("MYSQL    : AIVEN")
+print(
+    "RAZORPAY :",
+    "CONFIGURED"
+    if razorpay_client
+    else "NOT CONFIGURED"
+)
 print("==========================================")
 print()
 
 
 # ==========================================================
-# JSON SAFE HELPER
+# JSON SAFE
 # ==========================================================
 
 def json_safe(value):
@@ -63,13 +105,15 @@ def json_safe(value):
         return float(value)
 
     if isinstance(value, datetime):
-        return value.strftime("%Y-%m-%d %H:%M:%S")
+        return value.strftime(
+            "%Y-%m-%d %H:%M:%S"
+        )
 
     return value
 
 
 # ==========================================================
-# IMAGE URL HELPER
+# IMAGE URL
 # ==========================================================
 
 def make_image_url(image):
@@ -82,7 +126,10 @@ def make_image_url(image):
     if not image:
         return "/IMAGES/grocery.png.jpg"
 
-    if image.startswith("http://") or image.startswith("https://"):
+    if (
+        image.startswith("http://")
+        or image.startswith("https://")
+    ):
         return image
 
     if image.startswith("/IMAGES/"):
@@ -94,7 +141,10 @@ def make_image_url(image):
         return "/" + image
 
     if "/IMAGES/" in image:
-        image = image.split("/IMAGES/", 1)[1]
+        image = image.split(
+            "/IMAGES/",
+            1
+        )[1]
 
     image = image.split("/")[-1]
 
@@ -102,111 +152,11 @@ def make_image_url(image):
 
 
 # ==========================================================
-# FETCH PRODUCTS
-# ==========================================================
-
-def fetch_products():
-
-    conn = None
-    cursor = None
-
-    try:
-
-        conn = get_connection()
-        cursor = conn.cursor(dictionary=True)
-
-        try:
-
-            cursor.execute("""
-                SELECT
-                    id,
-                    name,
-                    category,
-                    price,
-                    quantity,
-                    image
-                FROM products
-                ORDER BY id ASC
-            """)
-
-            products = cursor.fetchall()
-
-        except Exception as image_error:
-
-            print("IMAGE COLUMN ERROR:", image_error)
-
-            conn.rollback()
-
-            cursor.close()
-
-            cursor = conn.cursor(dictionary=True)
-
-            cursor.execute("""
-                SELECT
-                    id,
-                    name,
-                    category,
-                    price,
-                    quantity
-                FROM products
-                ORDER BY id ASC
-            """)
-
-            products = cursor.fetchall()
-
-            for product in products:
-                product["image"] = "/IMAGES/grocery.png.jpg"
-
-        for product in products:
-
-            product["id"] = int(product["id"])
-
-            product["name"] = str(
-                product.get("name") or ""
-            )
-
-            product["category"] = str(
-                product.get("category") or "Grocery"
-            )
-
-            product["price"] = float(
-                product.get("price") or 0
-            )
-
-            product["quantity"] = int(
-                product.get("quantity") or 0
-            )
-
-            product["image"] = make_image_url(
-                product.get("image")
-            )
-
-        return products
-
-    finally:
-
-        if cursor:
-            cursor.close()
-
-        if conn:
-            conn.close()
-
-
-# ==========================================================
-# HOME PAGE
+# HOME
 # ==========================================================
 
 @app.route("/")
 def home():
-
-    if not os.path.exists(
-        os.path.join(HTML_DIR, "index.html")
-    ):
-
-        return """
-        <h1>Smart Grocery Challenge</h1>
-        <p>index.html was not found.</p>
-        """, 404
 
     return send_from_directory(
         HTML_DIR,
@@ -215,52 +165,79 @@ def home():
 
 
 # ==========================================================
-# SHORT HTML ROUTES
+# HTML ROUTES
 # ==========================================================
 
 @app.route("/index.html")
 def index_page():
-    return send_from_directory(HTML_DIR, "index.html")
+    return send_from_directory(
+        HTML_DIR,
+        "index.html"
+    )
 
 
 @app.route("/register.html")
 def register_page():
-    return send_from_directory(HTML_DIR, "register.html")
+    return send_from_directory(
+        HTML_DIR,
+        "register.html"
+    )
 
 
 @app.route("/login.html")
 def login_page():
-    return send_from_directory(HTML_DIR, "login.html")
+    return send_from_directory(
+        HTML_DIR,
+        "login.html"
+    )
 
 
 @app.route("/dashboard.html")
 def dashboard_page():
-    return send_from_directory(HTML_DIR, "dashboard.html")
+    return send_from_directory(
+        HTML_DIR,
+        "dashboard.html"
+    )
 
 
 @app.route("/products.html")
 def products_page():
-    return send_from_directory(HTML_DIR, "products.html")
+    return send_from_directory(
+        HTML_DIR,
+        "products.html"
+    )
 
 
 @app.route("/cart.html")
 def cart_page():
-    return send_from_directory(HTML_DIR, "cart.html")
+    return send_from_directory(
+        HTML_DIR,
+        "cart.html"
+    )
 
 
 @app.route("/orders.html")
 def orders_page():
-    return send_from_directory(HTML_DIR, "orders.html")
+    return send_from_directory(
+        HTML_DIR,
+        "orders.html"
+    )
 
 
 @app.route("/challenge.html")
 def challenge_page():
-    return send_from_directory(HTML_DIR, "challenge.html")
+    return send_from_directory(
+        HTML_DIR,
+        "challenge.html"
+    )
 
 
 @app.route("/admin.html")
 def admin_page():
-    return send_from_directory(HTML_DIR, "admin.html")
+    return send_from_directory(
+        HTML_DIR,
+        "admin.html"
+    )
 
 
 @app.route("/order-details.html")
@@ -272,7 +249,7 @@ def order_details_page():
 
 
 # ==========================================================
-# HTML FILES
+# STATIC FILE ROUTES
 # ==========================================================
 
 @app.route("/HTML/<path:filename>")
@@ -284,10 +261,6 @@ def html_files(filename):
     )
 
 
-# ==========================================================
-# CSS FILES
-# ==========================================================
-
 @app.route("/CSS/<path:filename>")
 def css_files(filename):
 
@@ -296,10 +269,6 @@ def css_files(filename):
         filename
     )
 
-
-# ==========================================================
-# JAVASCRIPT FILES
-# ==========================================================
 
 @app.route("/JS/<path:filename>")
 def js_files(filename):
@@ -310,10 +279,6 @@ def js_files(filename):
     )
 
 
-# ==========================================================
-# IMAGE FILES
-# ==========================================================
-
 @app.route("/IMAGES/<path:filename>")
 def image_files(filename):
 
@@ -322,11 +287,7 @@ def image_files(filename):
         filename
     )
 
-    print("IMAGE REQUEST:", filename)
-
     if not os.path.exists(file_path):
-
-        print("IMAGE NOT FOUND:", file_path)
 
         return jsonify({
             "success": False,
@@ -351,7 +312,7 @@ def test_api():
         "success": True,
         "message":
             "Smart Grocery Challenge Backend is Working!"
-    }), 200
+    })
 
 
 # ==========================================================
@@ -378,7 +339,7 @@ def database_test():
             "message":
                 "MySQL Connected Successfully!",
             "result": result[0]
-        }), 200
+        })
 
     except Exception as e:
 
@@ -411,7 +372,9 @@ def register():
 
     try:
 
-        data = request.get_json()
+        data = request.get_json(
+            silent=True
+        )
 
         if not data:
 
@@ -434,57 +397,48 @@ def register():
         email = data.get("email")
         password = data.get("password")
 
-        # If frontend doesn't have username,
-        # use fullname as username.
         if not username and fullname:
-
             username = fullname.strip()
 
         if not fullname:
-
             return jsonify({
                 "success": False,
                 "message": "Full name is required"
             }), 400
 
         if not username:
-
             return jsonify({
                 "success": False,
                 "message": "Username is required"
             }), 400
 
         if not email:
-
             return jsonify({
                 "success": False,
                 "message": "Email is required"
             }), 400
 
         if not password:
-
             return jsonify({
                 "success": False,
                 "message": "Password is required"
             }), 400
 
         conn = get_connection()
+        cursor = conn.cursor(
+            dictionary=True
+        )
 
-        cursor = conn.cursor(dictionary=True)
-
-        # --------------------------------------------------
-        # CHECK EMAIL
-        # --------------------------------------------------
-
-        cursor.execute("""
+        cursor.execute(
+            """
             SELECT id
             FROM users
             WHERE email = %s
-        """, (email,))
+            """,
+            (email,)
+        )
 
-        existing_email = cursor.fetchone()
-
-        if existing_email:
+        if cursor.fetchone():
 
             return jsonify({
                 "success": False,
@@ -492,19 +446,16 @@ def register():
                     "Email already registered"
             }), 409
 
-        # --------------------------------------------------
-        # CHECK USERNAME
-        # --------------------------------------------------
-
-        cursor.execute("""
+        cursor.execute(
+            """
             SELECT id
             FROM users
             WHERE username = %s
-        """, (username,))
+            """,
+            (username,)
+        )
 
-        existing_username = cursor.fetchone()
-
-        if existing_username:
+        if cursor.fetchone():
 
             return jsonify({
                 "success": False,
@@ -512,11 +463,8 @@ def register():
                     "Username already exists"
             }), 409
 
-        # --------------------------------------------------
-        # INSERT USER
-        # --------------------------------------------------
-
-        cursor.execute("""
+        cursor.execute(
+            """
             INSERT INTO users
             (
                 fullname,
@@ -525,25 +473,17 @@ def register():
                 password
             )
             VALUES
+            (%s, %s, %s, %s)
+            """,
             (
-                %s,
-                %s,
-                %s,
-                %s
+                fullname,
+                username,
+                email,
+                password
             )
-        """, (
-            fullname,
-            username,
-            email,
-            password
-        ))
+        )
 
         conn.commit()
-
-        print(
-            "USER REGISTERED:",
-            email
-        )
 
         return jsonify({
             "success": True,
@@ -585,7 +525,9 @@ def login():
 
     try:
 
-        data = request.get_json()
+        data = request.get_json(
+            silent=True
+        )
 
         if not data:
 
@@ -608,9 +550,12 @@ def login():
 
         conn = get_connection()
 
-        cursor = conn.cursor(dictionary=True)
+        cursor = conn.cursor(
+            dictionary=True
+        )
 
-        cursor.execute("""
+        cursor.execute(
+            """
             SELECT
                 id,
                 fullname,
@@ -619,10 +564,12 @@ def login():
             FROM users
             WHERE email = %s
             AND password = %s
-        """, (
-            email,
-            password
-        ))
+            """,
+            (
+                email,
+                password
+            )
+        )
 
         user = cursor.fetchone()
 
@@ -634,17 +581,13 @@ def login():
                     "Invalid email or password"
             }), 401
 
-        print(
-            "LOGIN SUCCESS:",
-            email
-        )
-
         return jsonify({
             "success": True,
             "message":
                 "Login Successful",
             "user": user
-        }), 200
+        })
+
 
     except Exception as e:
 
@@ -654,6 +597,111 @@ def login():
             "success": False,
             "message": str(e)
         }), 500
+
+    finally:
+
+        if cursor:
+            cursor.close()
+
+        if conn:
+            conn.close()
+
+
+# ==========================================================
+# FETCH PRODUCTS
+# ==========================================================
+
+def fetch_products():
+
+    conn = None
+    cursor = None
+
+    try:
+
+        conn = get_connection()
+
+        cursor = conn.cursor(
+            dictionary=True
+        )
+
+        try:
+
+            cursor.execute(
+                """
+                SELECT
+                    id,
+                    name,
+                    category,
+                    price,
+                    quantity,
+                    image
+                FROM products
+                ORDER BY id ASC
+                """
+            )
+
+        except Exception:
+
+            conn.rollback()
+
+            cursor.close()
+
+            cursor = conn.cursor(
+                dictionary=True
+            )
+
+            cursor.execute(
+                """
+                SELECT
+                    id,
+                    name,
+                    category,
+                    price,
+                    quantity
+                FROM products
+                ORDER BY id ASC
+                """
+            )
+
+            products = cursor.fetchall()
+
+            for product in products:
+                product["image"] = (
+                    "/IMAGES/grocery.png.jpg"
+                )
+
+        else:
+
+            products = cursor.fetchall()
+
+        for product in products:
+
+            product["id"] = int(
+                product["id"]
+            )
+
+            product["name"] = str(
+                product.get("name") or ""
+            )
+
+            product["category"] = str(
+                product.get("category")
+                or "Grocery"
+            )
+
+            product["price"] = float(
+                product.get("price") or 0
+            )
+
+            product["quantity"] = int(
+                product.get("quantity") or 0
+            )
+
+            product["image"] = make_image_url(
+                product.get("image")
+            )
+
+        return products
 
     finally:
 
@@ -678,7 +726,7 @@ def get_products():
         return jsonify({
             "success": True,
             "products": products
-        }), 200
+        })
 
     except Exception as e:
 
@@ -702,7 +750,9 @@ def add_product():
 
     try:
 
-        data = request.get_json()
+        data = request.get_json(
+            silent=True
+        )
 
         if not data:
 
@@ -715,7 +765,11 @@ def add_product():
         name = data.get("name")
         category = data.get("category")
         price = data.get("price")
-        quantity = data.get("quantity", 0)
+        quantity = data.get(
+            "quantity",
+            0
+        )
+
         image = data.get("image")
 
         if not name or not category or price is None:
@@ -731,7 +785,8 @@ def add_product():
 
         try:
 
-            cursor.execute("""
+            cursor.execute(
+                """
                 INSERT INTO products
                 (
                     name,
@@ -741,29 +796,27 @@ def add_product():
                     image
                 )
                 VALUES
+                (%s, %s, %s, %s, %s)
+                """,
                 (
-                    %s,
-                    %s,
-                    %s,
-                    %s,
-                    %s
+                    name,
+                    category,
+                    price,
+                    quantity,
+                    image
                 )
-            """, (
-                name,
-                category,
-                price,
-                quantity,
-                image
-            ))
+            )
 
         except Exception:
 
             conn.rollback()
 
             cursor.close()
+
             cursor = conn.cursor()
 
-            cursor.execute("""
+            cursor.execute(
+                """
                 INSERT INTO products
                 (
                     name,
@@ -772,18 +825,15 @@ def add_product():
                     quantity
                 )
                 VALUES
+                (%s, %s, %s, %s)
+                """,
                 (
-                    %s,
-                    %s,
-                    %s,
-                    %s
+                    name,
+                    category,
+                    price,
+                    quantity
                 )
-            """, (
-                name,
-                category,
-                price,
-                quantity
-            ))
+            )
 
         conn.commit()
 
@@ -798,8 +848,6 @@ def add_product():
 
         if conn:
             conn.rollback()
-
-        print("ADD PRODUCT ERROR:", e)
 
         return jsonify({
             "success": False,
@@ -830,7 +878,9 @@ def update_product(product_id):
 
     try:
 
-        data = request.get_json()
+        data = request.get_json(
+            silent=True
+        )
 
         if not data:
 
@@ -859,7 +909,8 @@ def update_product(product_id):
 
         try:
 
-            cursor.execute("""
+            cursor.execute(
+                """
                 UPDATE products
                 SET
                     name = %s,
@@ -868,23 +919,27 @@ def update_product(product_id):
                     quantity = %s,
                     image = %s
                 WHERE id = %s
-            """, (
-                name,
-                category,
-                price,
-                quantity,
-                image,
-                product_id
-            ))
+                """,
+                (
+                    name,
+                    category,
+                    price,
+                    quantity,
+                    image,
+                    product_id
+                )
+            )
 
         except Exception:
 
             conn.rollback()
 
             cursor.close()
+
             cursor = conn.cursor()
 
-            cursor.execute("""
+            cursor.execute(
+                """
                 UPDATE products
                 SET
                     name = %s,
@@ -892,13 +947,15 @@ def update_product(product_id):
                     price = %s,
                     quantity = %s
                 WHERE id = %s
-            """, (
-                name,
-                category,
-                price,
-                quantity,
-                product_id
-            ))
+                """,
+                (
+                    name,
+                    category,
+                    price,
+                    quantity,
+                    product_id
+                )
+            )
 
         conn.commit()
 
@@ -914,7 +971,7 @@ def update_product(product_id):
             "success": True,
             "message":
                 "Product updated successfully"
-        }), 200
+        })
 
     except Exception as e:
 
@@ -953,10 +1010,13 @@ def delete_product(product_id):
         conn = get_connection()
         cursor = conn.cursor()
 
-        cursor.execute("""
+        cursor.execute(
+            """
             DELETE FROM products
             WHERE id = %s
-        """, (product_id,))
+            """,
+            (product_id,)
+        )
 
         conn.commit()
 
@@ -972,7 +1032,7 @@ def delete_product(product_id):
             "success": True,
             "message":
                 "Product deleted successfully"
-        }), 200
+        })
 
     except Exception as e:
 
@@ -994,10 +1054,276 @@ def delete_product(product_id):
 
 
 # ==========================================================
+# RAZORPAY KEY
+# ==========================================================
+
+@app.route(
+    "/api/payment/key",
+    methods=["GET"]
+)
+def payment_key():
+
+    if not RAZORPAY_KEY_ID:
+
+        return jsonify({
+            "success": False,
+            "message":
+                "Razorpay Key ID is not configured"
+        }), 500
+
+    return jsonify({
+        "success": True,
+        "key_id": RAZORPAY_KEY_ID
+    })
+
+
+# ==========================================================
+# RAZORPAY CREATE ORDER
+# ==========================================================
+
+@app.route(
+    "/api/payment/create-order",
+    methods=["POST"]
+)
+def create_payment_order():
+
+    try:
+
+        if razorpay_client is None:
+
+            return jsonify({
+                "success": False,
+                "message":
+                    "Razorpay is not configured"
+            }), 500
+
+        data = request.get_json(
+            silent=True
+        )
+
+        if not data:
+
+            return jsonify({
+                "success": False,
+                "message":
+                    "No payment data received"
+            }), 400
+
+        amount = data.get("amount")
+
+        if amount is None:
+
+            return jsonify({
+                "success": False,
+                "message":
+                    "Amount is required"
+            }), 400
+
+        try:
+
+            amount = float(amount)
+
+        except (TypeError, ValueError):
+
+            return jsonify({
+                "success": False,
+                "message":
+                    "Invalid amount"
+            }), 400
+
+        if amount <= 0:
+
+            return jsonify({
+                "success": False,
+                "message":
+                    "Amount must be greater than zero"
+            }), 400
+
+        # Razorpay expects amount in paise
+        amount_paise = int(
+            round(amount * 100)
+        )
+
+        order_data = {
+            "amount": amount_paise,
+            "currency": "INR",
+            "receipt":
+                "SGC_" + datetime.now().strftime(
+                    "%Y%m%d%H%M%S"
+                ),
+            "payment_capture": 1
+        }
+
+        print()
+        print(
+            "RAZORPAY CREATE ORDER"
+        )
+        print(
+            "Amount INR:",
+            amount
+        )
+        print(
+            "Amount Paise:",
+            amount_paise
+        )
+
+        razorpay_order = (
+            razorpay_client.order.create(
+                data=order_data
+            )
+        )
+
+        print(
+            "RAZORPAY ORDER CREATED:",
+            razorpay_order["id"]
+        )
+
+        return jsonify({
+            "success": True,
+            "message":
+                "Payment order created",
+            "order_id":
+                razorpay_order["id"],
+            "amount":
+                razorpay_order["amount"],
+            "currency":
+                razorpay_order["currency"],
+            "key_id":
+                RAZORPAY_KEY_ID
+        }), 200
+
+    except Exception as e:
+
+        print()
+        print(
+            "RAZORPAY CREATE ORDER ERROR:"
+        )
+        print(repr(e))
+
+        return jsonify({
+            "success": False,
+            "message":
+                str(e)
+        }), 500
+
+
+# ==========================================================
+# RAZORPAY VERIFY PAYMENT
+# ==========================================================
+
+@app.route(
+    "/api/payment/verify",
+    methods=["POST"]
+)
+def verify_payment():
+
+    try:
+
+        if razorpay_client is None:
+
+            return jsonify({
+                "success": False,
+                "message":
+                    "Razorpay is not configured"
+            }), 500
+
+        data = request.get_json(
+            silent=True
+        )
+
+        if not data:
+
+            return jsonify({
+                "success": False,
+                "message":
+                    "No payment data received"
+            }), 400
+
+        razorpay_order_id = data.get(
+            "razorpay_order_id"
+        )
+
+        razorpay_payment_id = data.get(
+            "razorpay_payment_id"
+        )
+
+        razorpay_signature = data.get(
+            "razorpay_signature"
+        )
+
+        if not razorpay_order_id:
+            return jsonify({
+                "success": False,
+                "message":
+                    "Razorpay order ID is required"
+            }), 400
+
+        if not razorpay_payment_id:
+            return jsonify({
+                "success": False,
+                "message":
+                    "Razorpay payment ID is required"
+            }), 400
+
+        if not razorpay_signature:
+            return jsonify({
+                "success": False,
+                "message":
+                    "Razorpay signature is required"
+            }), 400
+
+        verification_data = {
+            "razorpay_order_id":
+                razorpay_order_id,
+            "razorpay_payment_id":
+                razorpay_payment_id,
+            "razorpay_signature":
+                razorpay_signature
+        }
+
+        razorpay_client.utility.verify_payment_signature(
+            verification_data
+        )
+
+        print(
+            "RAZORPAY PAYMENT VERIFIED:",
+            razorpay_payment_id
+        )
+
+        return jsonify({
+            "success": True,
+            "message":
+                "Payment verified successfully",
+            "payment_id":
+                razorpay_payment_id,
+            "order_id":
+                razorpay_order_id
+        }), 200
+
+    except Exception as e:
+
+        print(
+            "RAZORPAY VERIFY ERROR:",
+            repr(e)
+        )
+
+        return jsonify({
+            "success": False,
+            "message":
+                "Payment verification failed",
+            "error":
+                str(e)
+        }), 400
+
+
+# ==========================================================
 # PLACE ORDER
 # ==========================================================
 
-@app.route("/api/orders", methods=["POST"])
+@app.route(
+    "/api/orders",
+    methods=["POST"]
+)
 def place_order():
 
     conn = None
@@ -1005,7 +1331,9 @@ def place_order():
 
     try:
 
-        data = request.get_json()
+        data = request.get_json(
+            silent=True
+        )
 
         if not data:
 
@@ -1015,8 +1343,15 @@ def place_order():
                     "No order data received"
             }), 400
 
-        user_id = data.get("user_id")
-        items = data.get("items", [])
+        user_id = data.get(
+            "user_id"
+        )
+
+        items = data.get(
+            "items",
+            []
+        )
+
         total_amount = data.get(
             "total_amount",
             0
@@ -1041,7 +1376,8 @@ def place_order():
         conn = get_connection()
         cursor = conn.cursor()
 
-        cursor.execute("""
+        cursor.execute(
+            """
             INSERT INTO orders
             (
                 user_id,
@@ -1049,31 +1385,30 @@ def place_order():
                 status
             )
             VALUES
+            (%s, %s, %s)
+            """,
             (
-                %s,
-                %s,
-                %s
+                user_id,
+                total_amount,
+                "Placed"
             )
-        """, (
-            user_id,
-            total_amount,
-            "Placed"
-        ))
+        )
 
         order_id = cursor.lastrowid
 
         for item in items:
 
-            product_id = item.get(
-                "product_id"
+            product_id = (
+                item.get("product_id")
+                or item.get("id")
             )
-
-            if product_id is None:
-                product_id = item.get("id")
 
             quantity = item.get(
                 "quantity",
-                item.get("cartQuantity", 1)
+                item.get(
+                    "cartQuantity",
+                    1
+                )
             )
 
             price = item.get(
@@ -1081,7 +1416,8 @@ def place_order():
                 0
             )
 
-            cursor.execute("""
+            cursor.execute(
+                """
                 INSERT INTO order_items
                 (
                     order_id,
@@ -1090,18 +1426,15 @@ def place_order():
                     price
                 )
                 VALUES
+                (%s, %s, %s, %s)
+                """,
                 (
-                    %s,
-                    %s,
-                    %s,
-                    %s
+                    order_id,
+                    product_id,
+                    quantity,
+                    price
                 )
-            """, (
-                order_id,
-                product_id,
-                quantity,
-                price
-            ))
+            )
 
         conn.commit()
 
@@ -1109,7 +1442,8 @@ def place_order():
             "success": True,
             "message":
                 "Order placed successfully",
-            "order_id": order_id
+            "order_id":
+                order_id
         }), 201
 
     except Exception as e:
@@ -1117,7 +1451,10 @@ def place_order():
         if conn:
             conn.rollback()
 
-        print("ORDER ERROR:", e)
+        print(
+            "ORDER ERROR:",
+            e
+        )
 
         return jsonify({
             "success": False,
@@ -1154,7 +1491,8 @@ def get_user_orders(user_id):
             dictionary=True
         )
 
-        cursor.execute("""
+        cursor.execute(
+            """
             SELECT
                 id,
                 user_id,
@@ -1164,13 +1502,18 @@ def get_user_orders(user_id):
             FROM orders
             WHERE user_id = %s
             ORDER BY created_at DESC
-        """, (user_id,))
+            """,
+            (user_id,)
+        )
 
         orders = cursor.fetchall()
 
         for order in orders:
 
-            order["id"] = int(order["id"])
+            order["id"] = int(
+                order["id"]
+            )
+
             order["user_id"] = int(
                 order["user_id"]
             )
@@ -1186,11 +1529,9 @@ def get_user_orders(user_id):
         return jsonify({
             "success": True,
             "orders": orders
-        }), 200
+        })
 
     except Exception as e:
-
-        print("GET ORDERS ERROR:", e)
 
         return jsonify({
             "success": False,
@@ -1227,7 +1568,8 @@ def get_order_items(order_id):
             dictionary=True
         )
 
-        cursor.execute("""
+        cursor.execute(
+            """
             SELECT
                 oi.id,
                 oi.order_id,
@@ -1240,18 +1582,24 @@ def get_order_items(order_id):
                 ON oi.product_id = p.id
             WHERE oi.order_id = %s
             ORDER BY oi.id ASC
-        """, (order_id,))
+            """,
+            (order_id,)
+        )
 
         items = cursor.fetchall()
 
         for item in items:
 
-            item["id"] = int(item["id"])
+            item["id"] = int(
+                item["id"]
+            )
+
             item["order_id"] = int(
                 item["order_id"]
             )
 
             if item["product_id"] is not None:
+
                 item["product_id"] = int(
                     item["product_id"]
                 )
@@ -1267,11 +1615,9 @@ def get_order_items(order_id):
         return jsonify({
             "success": True,
             "items": items
-        }), 200
+        })
 
     except Exception as e:
-
-        print("ORDER ITEMS ERROR:", e)
 
         return jsonify({
             "success": False,
@@ -1288,7 +1634,7 @@ def get_order_items(order_id):
 
 
 # ==========================================================
-# GET SINGLE ORDER
+# SINGLE ORDER
 # ==========================================================
 
 @app.route(
@@ -1308,7 +1654,8 @@ def get_single_order(order_id):
             dictionary=True
         )
 
-        cursor.execute("""
+        cursor.execute(
+            """
             SELECT
                 id,
                 user_id,
@@ -1317,7 +1664,9 @@ def get_single_order(order_id):
                 created_at
             FROM orders
             WHERE id = %s
-        """, (order_id,))
+            """,
+            (order_id,)
+        )
 
         order = cursor.fetchone()
 
@@ -1329,7 +1678,10 @@ def get_single_order(order_id):
                     "Order not found"
             }), 404
 
-        order["id"] = int(order["id"])
+        order["id"] = int(
+            order["id"]
+        )
+
         order["user_id"] = int(
             order["user_id"]
         )
@@ -1342,7 +1694,8 @@ def get_single_order(order_id):
             order.get("created_at")
         )
 
-        cursor.execute("""
+        cursor.execute(
+            """
             SELECT
                 oi.id,
                 oi.order_id,
@@ -1356,18 +1709,24 @@ def get_single_order(order_id):
                 ON oi.product_id = p.id
             WHERE oi.order_id = %s
             ORDER BY oi.id ASC
-        """, (order_id,))
+            """,
+            (order_id,)
+        )
 
         items = cursor.fetchall()
 
         for item in items:
 
-            item["id"] = int(item["id"])
+            item["id"] = int(
+                item["id"]
+            )
+
             item["order_id"] = int(
                 item["order_id"]
             )
 
             if item["product_id"] is not None:
+
                 item["product_id"] = int(
                     item["product_id"]
                 )
@@ -1384,11 +1743,9 @@ def get_single_order(order_id):
             "success": True,
             "order": order,
             "items": items
-        }), 200
+        })
 
     except Exception as e:
-
-        print("SINGLE ORDER ERROR:", e)
 
         return jsonify({
             "success": False,
@@ -1405,7 +1762,7 @@ def get_single_order(order_id):
 
 
 # ==========================================================
-# DASHBOARD STATISTICS
+# DASHBOARD STATS
 # ==========================================================
 
 @app.route(
@@ -1425,19 +1782,23 @@ def dashboard_stats(user_id):
             dictionary=True
         )
 
-        cursor.execute("""
-            SELECT
-                COUNT(*) AS total_products
+        cursor.execute(
+            """
+            SELECT COUNT(*) AS total_products
             FROM products
-        """)
+            """
+        )
 
         product_result = cursor.fetchone()
 
         total_products = int(
-            product_result["total_products"] or 0
+            product_result[
+                "total_products"
+            ] or 0
         )
 
-        cursor.execute("""
+        cursor.execute(
+            """
             SELECT
                 COUNT(*) AS total_orders,
                 COALESCE(
@@ -1446,16 +1807,22 @@ def dashboard_stats(user_id):
                 ) AS total_spent
             FROM orders
             WHERE user_id = %s
-        """, (user_id,))
+            """,
+            (user_id,)
+        )
 
         order_result = cursor.fetchone()
 
         total_orders = int(
-            order_result["total_orders"] or 0
+            order_result[
+                "total_orders"
+            ] or 0
         )
 
         total_spent = float(
-            order_result["total_spent"] or 0
+            order_result[
+                "total_spent"
+            ] or 0
         )
 
         return jsonify({
@@ -1468,14 +1835,9 @@ def dashboard_stats(user_id):
                 "total_spent":
                     total_spent
             }
-        }), 200
+        })
 
     except Exception as e:
-
-        print(
-            "DASHBOARD STATS ERROR:",
-            e
-        )
 
         return jsonify({
             "success": False,
@@ -1492,7 +1854,7 @@ def dashboard_stats(user_id):
 
 
 # ==========================================================
-# ADMIN - UPDATE ORDER STATUS
+# ADMIN UPDATE ORDER STATUS
 # ==========================================================
 
 @app.route(
@@ -1506,7 +1868,9 @@ def admin_update_order_status(order_id):
 
     try:
 
-        data = request.get_json()
+        data = request.get_json(
+            silent=True
+        )
 
         if not data:
 
@@ -1516,7 +1880,9 @@ def admin_update_order_status(order_id):
                     "No status data received"
             }), 400
 
-        status = data.get("status")
+        status = data.get(
+            "status"
+        )
 
         allowed_statuses = [
             "Placed",
@@ -1531,23 +1897,24 @@ def admin_update_order_status(order_id):
             return jsonify({
                 "success": False,
                 "message":
-                    "Invalid status. Allowed values: "
-                    + ", ".join(
-                        allowed_statuses
-                    )
+                    "Invalid status"
             }), 400
 
         conn = get_connection()
+
         cursor = conn.cursor()
 
-        cursor.execute("""
+        cursor.execute(
+            """
             UPDATE orders
             SET status = %s
             WHERE id = %s
-        """, (
-            status,
-            order_id
-        ))
+            """,
+            (
+                status,
+                order_id
+            )
+        )
 
         conn.commit()
 
@@ -1563,18 +1930,14 @@ def admin_update_order_status(order_id):
             "success": True,
             "message":
                 "Order status updated successfully",
-            "status": status
-        }), 200
+            "status":
+                status
+        })
 
     except Exception as e:
 
         if conn:
             conn.rollback()
-
-        print(
-            "UPDATE ORDER STATUS ERROR:",
-            e
-        )
 
         return jsonify({
             "success": False,
@@ -1594,14 +1957,19 @@ def admin_update_order_status(order_id):
 # IMAGE TEST
 # ==========================================================
 
-@app.route("/api/image-test")
+@app.route(
+    "/api/image-test",
+    methods=["GET"]
+)
 def image_test():
 
     files = []
 
     if os.path.exists(IMAGES_DIR):
 
-        for filename in os.listdir(IMAGES_DIR):
+        for filename in os.listdir(
+            IMAGES_DIR
+        ):
 
             full_path = os.path.join(
                 IMAGES_DIR,
@@ -1615,14 +1983,52 @@ def image_test():
                     "url":
                         "/IMAGES/" + filename,
                     "size":
-                        os.path.getsize(full_path)
+                        os.path.getsize(
+                            full_path
+                        )
                 })
 
     return jsonify({
         "success": True,
-        "images_directory": IMAGES_DIR,
+        "images_directory":
+            IMAGES_DIR,
         "files": files
     })
+
+
+# ==========================================================
+# ERROR HANDLERS
+# ==========================================================
+
+@app.errorhandler(404)
+def not_found(error):
+
+    # Always return JSON for API requests.
+    if request.path.startswith("/api/"):
+
+        return jsonify({
+            "success": False,
+            "message":
+                "API endpoint not found",
+            "path":
+                request.path
+        }), 404
+
+    return error
+
+
+@app.errorhandler(500)
+def internal_error(error):
+
+    if request.path.startswith("/api/"):
+
+        return jsonify({
+            "success": False,
+            "message":
+                "Internal server error"
+        }), 500
+
+    return error
 
 
 # ==========================================================
@@ -1631,16 +2037,26 @@ def image_test():
 
 if __name__ == "__main__":
 
+    port = int(
+        os.environ.get(
+            "PORT",
+            5000
+        )
+    )
+
     print()
     print("==========================================")
     print(" SMART GROCERY FLASK SERVER")
     print("==========================================")
-    print("Server: http://127.0.0.1:5000")
+    print(
+        "PORT:",
+        port
+    )
     print("==========================================")
     print()
 
     app.run(
-        host="127.0.0.1",
-        port=5000,
-        debug=True
+        host="0.0.0.0",
+        port=port,
+        debug=False
     )

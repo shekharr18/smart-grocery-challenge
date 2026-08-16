@@ -1,6 +1,6 @@
-/* ==========================================================
-   SMART GROCERY - PRODUCTS PAGE
-   ========================================================== */
+/* =====================================================
+   SMART GROCERY - PRODUCTS
+   ===================================================== */
 
 * {
     margin: 0;
@@ -11,69 +11,61 @@
 
 body {
     font-family: "Poppins", Arial, sans-serif;
-
-    background: #f5f7f6;
-
+    background: #f3f7f5;
     color: #222;
-
     min-height: 100vh;
 }
 
 
-/* ==========================================================
+/* =====================================================
    NAVBAR
-   ========================================================== */
+   ===================================================== */
 
 .navbar {
     width: 100%;
-
     min-height: 72px;
 
-    background: white;
+    background: linear-gradient(
+        90deg,
+        #218838,
+        #2fa043
+    );
 
     display: flex;
-
     align-items: center;
-
     justify-content: space-between;
 
-    padding: 0 40px;
-
-    box-shadow:
-        0 2px 12px
-        rgba(0, 0, 0, 0.08);
+    padding: 0 50px;
 
     position: sticky;
-
     top: 0;
 
     z-index: 1000;
+
+    box-shadow:
+        0 4px 15px rgba(0, 0, 0, 0.15);
 }
 
 
 .logo {
-    font-size: 22px;
-
+    color: white;
+    font-size: 26px;
     font-weight: 700;
 }
 
 
 .nav-links {
     display: flex;
-
     align-items: center;
-
-    gap: 20px;
+    gap: 24px;
 }
 
 
 .nav-links a {
+    color: white;
     text-decoration: none;
 
-    color: #333;
-
-    font-size: 14px;
-
+    font-size: 16px;
     font-weight: 500;
 
     transition: 0.2s;
@@ -81,134 +73,119 @@ body {
 
 
 .nav-links a:hover {
-    color: #4caf50;
+    opacity: 0.8;
 }
 
 
 .nav-links a.active {
-    color: #4caf50;
-
-    font-weight: 600;
+    font-weight: 700;
 }
 
 
 #cartCount {
-    display: inline-flex;
+    display: inline-block;
 
-    align-items: center;
+    min-width: 24px;
 
-    justify-content: center;
+    text-align: center;
 
-    min-width: 20px;
-
-    height: 20px;
-
-    padding: 0 5px;
-
-    background: #4caf50;
-
+    background: #ff9800;
     color: white;
 
-    border-radius: 50px;
+    border-radius: 20px;
 
-    font-size: 11px;
+    padding: 2px 7px;
 
     margin-left: 3px;
+
+    font-size: 13px;
 }
 
 
 #logoutBtn {
     border: none;
 
-    background: #e53935;
+    background: white;
+    color: #217a35;
 
-    color: white;
+    padding: 10px 20px;
 
-    padding: 9px 17px;
-
-    border-radius: 8px;
-
-    cursor: pointer;
+    border-radius: 9px;
 
     font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
 
-    font-size: 13px;
-
-    font-weight: 500;
+    cursor: pointer;
 }
 
 
 #logoutBtn:hover {
-    background: #c62828;
+    background: #eeeeee;
 }
 
 
-/* ==========================================================
+/* =====================================================
    MAIN PAGE
-   ========================================================== */
+   ===================================================== */
 
 .products-page {
     width: 92%;
-
     max-width: 1400px;
 
-    margin: 35px auto 60px;
+    margin: 40px auto 80px;
 }
 
 
 .page-heading {
-    margin-bottom: 28px;
+    text-align: center;
+
+    margin-bottom: 30px;
 }
 
 
 .page-heading h1 {
-    font-size: 32px;
+    color: #218838;
 
-    font-weight: 600;
+    font-size: 38px;
 
-    margin-bottom: 7px;
+    margin-bottom: 8px;
 }
 
 
 .page-heading p {
-    color: #777;
+    color: #666;
 
-    font-size: 14px;
+    font-size: 16px;
 }
 
 
-/* ==========================================================
-   FILTER SECTION
-   ========================================================== */
+/* =====================================================
+   FILTER
+   ===================================================== */
 
 .filter-section {
     background: white;
 
-    border-radius: 14px;
+    padding: 20px;
 
-    padding: 18px;
+    border-radius: 15px;
 
     display: grid;
 
     grid-template-columns:
         1fr 220px 220px;
 
-    gap: 14px;
+    gap: 15px;
 
     box-shadow:
         0 5px 20px
-        rgba(0, 0, 0, 0.05);
-
-    border: 1px solid #eeeeee;
+        rgba(0, 0, 0, 0.07);
 }
 
 
 .search-box {
-    height: 45px;
-
-    border: 1px solid #ddd;
-
-    border-radius: 8px;
+    height: 48px;
 
     display: flex;
 
@@ -216,77 +193,70 @@ body {
 
     gap: 10px;
 
-    padding: 0 13px;
+    border: 1px solid #ddd;
+
+    border-radius: 9px;
+
+    padding: 0 14px;
 }
 
 
 .search-box span {
-    font-size: 17px;
+    font-size: 20px;
 }
 
 
 .search-box input {
     width: 100%;
 
-    height: 100%;
-
     border: none;
-
     outline: none;
 
     font-family: inherit;
 
-    font-size: 13px;
+    font-size: 15px;
 }
 
 
 #categoryFilter,
 #sortFilter {
-    height: 45px;
+    height: 48px;
 
     border: 1px solid #ddd;
 
-    border-radius: 8px;
+    border-radius: 9px;
 
     padding: 0 12px;
 
-    background: white;
-
     font-family: inherit;
 
-    font-size: 13px;
-
-    outline: none;
+    background: white;
 
     cursor: pointer;
+
+    outline: none;
 }
 
 
-#categoryFilter:focus,
-#sortFilter:focus {
-    border-color: #4caf50;
-}
-
-
-/* ==========================================================
-   RESULT BAR
-   ========================================================== */
+/* =====================================================
+   RESULT
+   ===================================================== */
 
 .result-bar {
-    margin: 25px 0 15px;
+    margin: 22px 0 15px;
 }
 
 
 .result-bar p {
-    color: #777;
+    color: #666;
 
-    font-size: 13px;
+    font-size: 14px;
 }
 
 
-/* ==========================================================
-   PRODUCTS GRID
-   ========================================================== */
+/* =====================================================
+   PRODUCT GRID
+   ===================================================== */
 
 .products-grid {
     display: grid;
@@ -294,61 +264,51 @@ body {
     grid-template-columns:
         repeat(4, 1fr);
 
-    gap: 22px;
+    gap: 25px;
 }
 
 
-/* ==========================================================
+/* =====================================================
    PRODUCT CARD
-   ========================================================== */
+   ===================================================== */
 
 .product-card {
     background: white;
 
-    border-radius: 14px;
+    border-radius: 18px;
 
     overflow: hidden;
 
-    border: 1px solid #eeeeee;
-
     box-shadow:
-        0 5px 20px
-        rgba(0, 0, 0, 0.05);
+        0 7px 25px
+        rgba(0, 0, 0, 0.08);
 
-    transition:
-        transform 0.2s,
-        box-shadow 0.2s;
-
-    display: flex;
-
-    flex-direction: column;
+    transition: 0.25s;
 }
 
 
 .product-card:hover {
-    transform: translateY(-4px);
+    transform: translateY(-5px);
 
     box-shadow:
         0 12px 30px
-        rgba(0, 0, 0, 0.09);
+        rgba(0, 0, 0, 0.13);
 }
 
 
-/* ==========================================================
-   PRODUCT IMAGE
-   ========================================================== */
+/* =====================================================
+   IMAGE
+   ===================================================== */
 
 .product-image {
     width: 100%;
+    height: 210px;
 
-    height: 190px;
-
-    background: #f7f8f8;
+    background: #eff8e8;
 
     display: flex;
 
     align-items: center;
-
     justify-content: center;
 
     overflow: hidden;
@@ -357,85 +317,64 @@ body {
 
 .product-image img {
     width: 100%;
-
     height: 100%;
 
     object-fit: contain;
 
-    padding: 18px;
-
-    transition: 0.2s;
+    padding: 10px;
 }
 
 
-.product-card:hover
-.product-image img {
-    transform: scale(1.04);
-}
-
-
-/* ==========================================================
-   PRODUCT INFO
-   ========================================================== */
+/* =====================================================
+   INFORMATION
+   ===================================================== */
 
 .product-info {
-    padding: 18px;
-
-    display: flex;
-
-    flex-direction: column;
-
-    flex: 1;
+    padding: 20px;
 }
 
 
 .product-category {
-    color: #4caf50;
+    color: #27883a;
 
-    font-size: 11px;
+    font-size: 14px;
 
-    font-weight: 600;
-
-    text-transform: uppercase;
-
-    margin-bottom: 5px;
+    margin-bottom: 6px;
 }
 
 
 .product-name {
-    font-size: 17px;
-
-    font-weight: 600;
-
-    margin-bottom: 8px;
-
-    min-height: 25px;
-}
-
-
-.product-price {
     font-size: 20px;
 
-    font-weight: 700;
+    font-weight: 600;
 
     margin-bottom: 7px;
 }
 
 
+.product-price {
+    font-size: 21px;
+
+    font-weight: 700;
+
+    margin-bottom: 5px;
+}
+
+
 .stock {
-    font-size: 12px;
+    font-size: 13px;
 
     margin-bottom: 15px;
 }
 
 
 .stock.available {
-    color: #388e3c;
+    color: #218838;
 }
 
 
 .stock.low {
-    color: #ef6c00;
+    color: #e68a00;
 }
 
 
@@ -444,16 +383,14 @@ body {
 }
 
 
-/* ==========================================================
-   CARD FOOTER
-   ========================================================== */
+/* =====================================================
+   PRODUCT ACTIONS
+   ===================================================== */
 
 .product-actions {
     display: flex;
 
     gap: 8px;
-
-    margin-top: auto;
 }
 
 
@@ -472,51 +409,48 @@ body {
 
 .quantity-control button {
     width: 34px;
-
-    height: 40px;
+    height: 42px;
 
     border: none;
 
-    background: #f5f5f5;
+    background: #f2f2f2;
+
+    font-size: 19px;
 
     cursor: pointer;
-
-    font-size: 17px;
 }
 
 
 .quantity-control button:hover {
-    background: #e8e8e8;
+    background: #e5e5e5;
 }
 
 
-.quantity-control span {
-    width: 30px;
+.quantity-value {
+    width: 32px;
 
     text-align: center;
 
-    font-size: 13px;
-
-    font-weight: 500;
+    font-size: 14px;
 }
 
 
 .add-cart-btn {
     flex: 1;
 
-    height: 40px;
+    height: 42px;
 
     border: none;
 
     border-radius: 8px;
 
-    background: #4caf50;
+    background: #2e943c;
 
     color: white;
 
     font-family: inherit;
 
-    font-size: 12px;
+    font-size: 14px;
 
     font-weight: 600;
 
@@ -527,62 +461,20 @@ body {
 
 
 .add-cart-btn:hover {
-    background: #388e3c;
+    background: #217a2f;
 }
 
 
 .add-cart-btn:disabled {
-    background: #bdbdbd;
+    background: #aaa;
 
     cursor: not-allowed;
 }
 
 
-/* ==========================================================
-   NO PRODUCTS
-   ========================================================== */
-
-.no-products {
-    grid-column: 1 / -1;
-
-    background: white;
-
-    border-radius: 14px;
-
-    padding: 60px 20px;
-
-    text-align: center;
-
-    color: #777;
-
-    border: 1px solid #eee;
-}
-
-
-.no-products .icon {
-    font-size: 45px;
-
-    margin-bottom: 10px;
-}
-
-
-.no-products h2 {
-    color: #444;
-
-    font-size: 20px;
-
-    margin-bottom: 5px;
-}
-
-
-.no-products p {
-    font-size: 13px;
-}
-
-
-/* ==========================================================
+/* =====================================================
    LOADING
-   ========================================================== */
+   ===================================================== */
 
 .loading {
     grid-column: 1 / -1;
@@ -591,31 +483,29 @@ body {
 
     display: flex;
 
+    flex-direction: column;
+
     align-items: center;
 
     justify-content: center;
 
-    flex-direction: column;
+    gap: 15px;
 
-    color: #777;
-
-    gap: 12px;
+    color: #666;
 }
 
 
 .spinner {
-    width: 35px;
+    width: 42px;
+    height: 42px;
 
-    height: 35px;
+    border: 4px solid #ddd;
 
-    border: 4px solid #e5e5e5;
-
-    border-top-color: #4caf50;
+    border-top-color: #2e943c;
 
     border-radius: 50%;
 
-    animation:
-        spin 0.8s linear infinite;
+    animation: spin 0.8s linear infinite;
 }
 
 
@@ -628,40 +518,60 @@ body {
 }
 
 
-/* ==========================================================
+/* =====================================================
+   NO PRODUCTS
+   ===================================================== */
+
+.no-products {
+    grid-column: 1 / -1;
+
+    background: white;
+
+    padding: 60px;
+
+    text-align: center;
+
+    border-radius: 15px;
+}
+
+
+.no-products .icon {
+    font-size: 50px;
+
+    margin-bottom: 10px;
+}
+
+
+.no-products h2 {
+    margin-bottom: 8px;
+}
+
+
+/* =====================================================
    CART MESSAGE
-   ========================================================== */
+   ===================================================== */
 
 .cart-message {
     position: fixed;
 
     right: 25px;
-
     bottom: 25px;
 
     background: #222;
 
     color: white;
 
-    padding: 13px 20px;
+    padding: 14px 20px;
 
     border-radius: 9px;
 
-    font-size: 13px;
-
-    box-shadow:
-        0 8px 25px
-        rgba(0, 0, 0, 0.2);
-
     opacity: 0;
 
-    transform: translateY(15px);
+    transform: translateY(20px);
+
+    transition: 0.3s;
 
     pointer-events: none;
-
-    transition:
-        opacity 0.25s,
-        transform 0.25s;
 
     z-index: 2000;
 }
@@ -674,9 +584,9 @@ body {
 }
 
 
-/* ==========================================================
+/* =====================================================
    RESPONSIVE
-   ========================================================== */
+   ===================================================== */
 
 @media (max-width: 1100px) {
 
@@ -699,10 +609,10 @@ body {
 }
 
 
-@media (max-width: 800px) {
+@media (max-width: 750px) {
 
     .navbar {
-        padding: 18px 25px;
+        padding: 15px 20px;
 
         flex-direction: column;
 
@@ -714,8 +624,6 @@ body {
         flex-wrap: wrap;
 
         justify-content: center;
-
-        gap: 12px;
     }
 
 
@@ -727,50 +635,20 @@ body {
 }
 
 
-@media (max-width: 550px) {
-
-    .products-page {
-        width: 94%;
-
-        margin-top: 25px;
-    }
-
-
-    .page-heading h1 {
-        font-size: 25px;
-    }
-
-
-    .filter-section {
-        grid-template-columns: 1fr;
-
-        padding: 14px;
-    }
-
-
-    .search-box {
-        grid-column: auto;
-    }
-
+@media (max-width: 500px) {
 
     .products-grid {
         grid-template-columns: 1fr;
     }
 
 
-    .product-image {
-        height: 220px;
+    .filter-section {
+        grid-template-columns: 1fr;
     }
 
 
-    .cart-message {
-        left: 20px;
-
-        right: 20px;
-
-        bottom: 20px;
-
-        text-align: center;
+    .search-box {
+        grid-column: auto;
     }
 
 }
